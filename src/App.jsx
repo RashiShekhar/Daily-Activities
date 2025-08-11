@@ -1,10 +1,14 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Intro from "./components/Intro";
 
 function App() {
   return (
-    <>
-      <div>Hello</div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Intro />} />
+      </Routes>
+    </Router>
   );
 }
 
