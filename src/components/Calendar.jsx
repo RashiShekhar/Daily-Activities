@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function Calendar() {
-  // Get current date info
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
 
-  // Sample tasks with dates (YYYY-MM-DD)
   const tasks = [
     { id: 1, date: "2025-08-05", name: "Morning Walk" },
     { id: 2, date: "2025-08-05", name: "Read a book" },
@@ -17,7 +16,6 @@ export default function Calendar() {
     { id: 4, date: "2025-08-15", name: "Workout" },
   ];
 
-  // Get month name
   const monthName = new Date(currentYear, currentMonth).toLocaleString(
     "default",
     {
@@ -25,27 +23,21 @@ export default function Calendar() {
     }
   );
 
-  // Get number of days in current month
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-  // Get day of week index the month starts on (0=Sun,...)
   const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-
-  // Generate array for days
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  // Filter tasks for selected day
   const selectedDateStr =
     selectedDay !== null
       ? `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(
           selectedDay
         ).padStart(2, "0")}`
       : null;
+
   const tasksForSelectedDay = selectedDateStr
     ? tasks.filter((task) => task.date === selectedDateStr)
     : [];
 
-  // Change month handlers
   const goToPrevMonth = () => {
     if (currentMonth === 0) {
       setCurrentMonth(11);
@@ -67,14 +59,19 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
-      {/* Month and year header */}
+    <motion.div
+      className="max-w-4xl mx-auto p-8 bg-white rounded-2xl shadow-xl"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <button
           onClick={goToPrevMonth}
           className="text-blue-600 hover:text-blue-800 font-bold"
         >
-          &lt; Prev
+          &larr; Prev
         </button>
         <h2 className="text-4xl font-extrabold text-gray-800 text-center">
           {monthName} {currentYear}
@@ -83,71 +80,93 @@ export default function Calendar() {
           onClick={goToNextMonth}
           className="text-blue-600 hover:text-blue-800 font-bold"
         >
-          Next &gt;
+          Next &rarr;
         </button>
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 gap-2 mb-4 text-center text-gray-600 font-semibold">
+      <div className="grid grid-cols-7 gap-2 mb-4 text-center text-gray-500 font-semibold uppercase tracking-wider">
         {weekdays.map((day) => (
-          <div key={day} className="uppercase">
-            {day}
-          </div>
+          <div key={day}>{day}</div>
         ))}
       </div>
 
-      {/* Days grid */}
-      <div className="grid grid-cols-7 gap-3">
-        {/* Padding days for first day alignment */}
+      {/* Days Grid */}
+      <div className="grid grid-cols-7 gap-3 text-center">
         {[...Array(firstDayIndex)].map((_, i) => (
-          <div key={"pad" + i} />
+          <div key={"pad" + i}></div>
         ))}
 
         {daysArray.map((day) => {
-          // Check if day has tasks
           const dayStr = `${currentYear}-${String(currentMonth + 1).padStart(
             2,
             "0"
           )}-${String(day).padStart(2, "0")}`;
           const hasTasks = tasks.some((task) => task.date === dayStr);
-
-          // Highlight selected day
           const isSelected = day === selectedDay;
 
+          const isToday =
+            day === today.getDate() &&
+            currentMonth === today.getMonth() &&
+            currentYear === today.getFullYear();
+
           return (
-            <div
+            <motion.div
               key={day}
               onClick={() => setSelectedDay(day)}
-              className={`h-16 flex flex-col items-center justify-center rounded-lg cursor-pointer transition ${
-                isSelected ? "bg-blue-600 text-white" : "hover:bg-blue-100"
+              className={`h-16 flex flex-col items-center justify-center rounded-lg cursor-pointer transition-all duration-200 ${
+                isSelected
+                  ? "bg-blue-600 text-white"
+                  : isToday
+                  ? "bg-blue-100 text-blue-800 font-bold"
+                  : "hover:bg-gray-100"
               }`}
+              whileHover={{ scale: 1.05 }}
             >
-              <span className="text-lg font-semibold">{day}</span>
+              <span className="text-lg">{day}</span>
               {hasTasks && (
-                <div className="mt-1 w-3 h-3 rounded-full bg-blue-600"></div>
+                <motion.div
+                  layoutId="task-dot"
+                  className="mt-1 w-2.5 h-2.5 rounded-full bg-blue-500"
+                ></motion.div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>
 
-      {/* Tasks list for selected day */}
-      {selectedDay && (
-        <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow">
-          <h3 className="text-2xl font-semibold mb-4">
-            Tasks for {monthName} {selectedDay}, {currentYear}
-          </h3>
-          {tasksForSelectedDay.length === 0 ? (
-            <p className="text-gray-600">No tasks for this day.</p>
-          ) : (
-            <ul className="list-disc pl-5 space-y-2 text-gray-800">
-              {tasksForSelectedDay.map(({ id, name }) => (
-                <li key={id}>{name}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-    </div>
+      {/* Tasks for selected day */}
+      <AnimatePresence>
+        {selectedDay && (
+          <motion.div
+            className="mt-10 bg-gray-50 p-6 rounded-xl shadow-md"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+              Tasks for {monthName} {selectedDay}, {currentYear}
+            </h3>
+            {tasksForSelectedDay.length === 0 ? (
+              <p className="text-gray-600">No tasks for this day.</p>
+            ) : (
+              <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                {tasksForSelectedDay.map(({ id, name }) => (
+                  <motion.li
+                    key={id}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 * id }}
+                  >
+                    {name}
+                  </motion.li>
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
