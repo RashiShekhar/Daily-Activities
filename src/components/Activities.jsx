@@ -7,7 +7,7 @@ export default function Activities() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (task.trim()) {
-      console.log("Task submitted:", task); // Replace with your handler logic
+      console.log("Task submitted:", task);
       setTask("");
     }
   };
@@ -66,7 +66,7 @@ export default function Activities() {
         <h3 className="text-3xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-3">
           📋 Your Tasks
         </h3>
-        {/* Add task list UI here later */}
+
         <p className="text-gray-500">No tasks yet. Start adding some!</p>
       </motion.div>
     </motion.div>

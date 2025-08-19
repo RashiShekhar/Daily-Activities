@@ -135,7 +135,6 @@ export default function Calendar() {
         })}
       </div>
 
-      {/* Tasks for selected day */}
       <AnimatePresence>
         {selectedDay && (
           <motion.div
