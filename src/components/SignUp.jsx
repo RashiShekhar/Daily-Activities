@@ -1,9 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export default function SignUp() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [confirmpassword, setConfirmpassword] = useState("");
   const navigate = useNavigate();
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, confirmpassword }),
+      });
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format. Expected JSON.");
+      }
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.user);
+        navigate("/login");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error.message);
+      alert("Login failed: " + error.message);
+    }
+  };
   return (
     <div className="min-h-screen flex">
       <div className="hidden md:flex w-1/2 relative overflow-hidden">
@@ -15,19 +47,14 @@ export default function SignUp() {
           <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
             Create Account
           </h2>
-          <form
-            className="space-y-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              navigate("/dashboard");
-            }}
-          >
+          <form className="space-y-5" onSubmit={handleSignup}>
             <div>
               <label className="block mb-1 text-gray-600">Name</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your name"
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div>
@@ -36,6 +63,7 @@ export default function SignUp() {
                 type="email"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -44,6 +72,7 @@ export default function SignUp() {
                 type="password"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Create a password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div>
@@ -54,6 +83,7 @@ export default function SignUp() {
                 type="password"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Confirm your password"
+                onChange={(e) => setConfirmpassword(e.target.value)}
               />
             </div>
             <button
