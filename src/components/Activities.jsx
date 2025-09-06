@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export default function Activities() {
   const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState([]);
+
+  // Load tasks from localStorage on component mount
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, []);
+
+  // Save tasks to localStorage whenever tasks change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (task.trim()) {
-      console.log("Task submitted:", task);
+    const trimmedTask = task.trim();
+    if (trimmedTask) {
+      setTasks((prevTasks) => [...prevTasks, trimmedTask]);
       setTask("");
     }
   };
@@ -67,7 +82,21 @@ export default function Activities() {
           📋 Your Tasks
         </h3>
 
-        <p className="text-gray-500">No tasks yet. Start adding some!</p>
+        {tasks.length === 0 ? (
+          <p className="text-gray-500">No tasks yet. Start adding some!</p>
+        ) : (
+          <ul className="space-y-4">
+            {tasks.map((t, index) => (
+              <li
+                key={index}
+                className="flex items-start bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-sm"
+              >
+                <span className="text-blue-600 font-bold mr-2">•</span>
+                <span className="text-gray-800">{t}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </motion.div>
     </motion.div>
   );
