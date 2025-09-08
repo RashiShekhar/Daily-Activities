@@ -12,11 +12,16 @@ export default function SignUp() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    if (password !== confirmpassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
       const response = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, confirmpassword }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const contentType = response.headers.get("content-type");
@@ -27,8 +32,7 @@ export default function SignUp() {
       const data = await response.json();
 
       if (response.ok) {
-        // Optional: Replace this with actual login logic if needed
-        // login(data.user);
+        alert("Signup successful! Please log in.");
         navigate("/login");
       } else {
         alert(data.message || "Signup failed");

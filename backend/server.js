@@ -20,6 +20,10 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
+// Routes
+const authRoutes = require("./routes/auth");
+app.use("/api", authRoutes);
+
 // Root route
 app.get("/", (req, res) => {
   res.send("Backend is running!");
