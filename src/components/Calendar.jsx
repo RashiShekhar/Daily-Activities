@@ -134,38 +134,6 @@ export default function Calendar() {
           );
         })}
       </div>
-
-      <AnimatePresence>
-        {selectedDay && (
-          <motion.div
-            className="mt-10 bg-gray-50 p-6 rounded-xl shadow-md"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-              Tasks for {monthName} {selectedDay}, {currentYear}
-            </h3>
-            {tasksForSelectedDay.length === 0 ? (
-              <p className="text-gray-600">No tasks for this day.</p>
-            ) : (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                {tasksForSelectedDay.map(({ id, name }) => (
-                  <motion.li
-                    key={id}
-                    initial={{ x: -10, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 * id }}
-                  >
-                    {name}
-                  </motion.li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
