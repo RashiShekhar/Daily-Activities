@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import "./Settings.css";
 
 export default function Settings() {
+  const [user, setUser] = useState({ name: "", email: "" });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   return (
     <motion.div
       className="settings-container"
@@ -21,11 +30,11 @@ export default function Settings() {
         <h2>User Details</h2>
         <div className="detail-row">
           <span className="label">Name:</span>
-          <span className="value">[User Name]</span>
+          <span className="value">{user.name || "Not Available"}</span>
         </div>
         <div className="detail-row">
           <span className="label">Email:</span>
-          <span className="value">[User Email]</span>
+          <span className="value">{user.email || "Not Available"}</span>
         </div>
       </motion.div>
 
