@@ -6,7 +6,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [confirmpassword, setConfirmpassword] = useState("");
+
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {

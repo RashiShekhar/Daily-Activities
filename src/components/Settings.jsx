@@ -37,20 +37,6 @@ export default function Settings() {
           <span className="value">{user.email || "Not Available"}</span>
         </div>
       </motion.div>
-
-      <motion.div
-        className="section theme-section"
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <h2>Theme</h2>
-        <div className="detail-row">
-          <span className="label">Current Theme:</span>
-          <span className="value">[Light/Dark]</span>
-        </div>
-        <button className="theme-toggle-btn">🌗 Switch Theme</button>
-      </motion.div>
     </motion.div>
   );
 }

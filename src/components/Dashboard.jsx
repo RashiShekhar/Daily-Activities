@@ -1,9 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
-
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return (
     <motion.div
       className="max-w-7xl mx-auto p-8 bg-white rounded-2xl shadow-lg"
@@ -75,6 +76,7 @@ export default function Dashboard() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition"
+          onClick={() => navigate("/dashboard/settings")}
         >
           Go to Settings
         </motion.button>
