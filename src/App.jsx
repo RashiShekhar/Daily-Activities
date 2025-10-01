@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 import Activities from "./components/Activities";
 import Calendar from "./components/Calendar";
 import Settings from "./components/Settings";
+import Music from "./components/Music";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="activities" element={<Activities />} />
           <Route path="calendar" element={<Calendar />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="settings" element={<Settings />} />{" "}
+          <Route path="music" element={<Music />} />
         </Route>
       </Routes>
     </Router>
