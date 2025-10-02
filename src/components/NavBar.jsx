@@ -10,6 +10,7 @@ export default function NavBar() {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Activities", path: "/dashboard/activities" },
     { name: "Calendar", path: "/dashboard/calendar" },
+    { name: "Music", path: "/dashboard/music" },
     { name: "Settings", path: "/dashboard/settings" },
   ];
 
