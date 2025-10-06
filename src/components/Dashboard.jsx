@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [tasks, setTasks] = useState([]);
+
+  // Load tasks from localStorage when Dashboard mounts
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, []);
+
   return (
     <motion.div
       className="max-w-7xl mx-auto p-8 bg-white rounded-2xl shadow-lg"
@@ -21,6 +33,7 @@ export default function Dashboard() {
         Good evening, {user?.name || "there"} 👋
       </motion.h1>
 
+      {/* Stats */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14"
         initial="hidden"
@@ -35,7 +48,7 @@ export default function Dashboard() {
       >
         <StatCard title="Activities Completed" value="5 / 8" />
         <StatCard title="Time Spent" value="3h 45m" />
-        <StatCard title="Tasks Left" value="3" />
+        <StatCard title="Tasks Left" value={tasks.length} />
         <StatCard title="Weekly Streak" value="4 days" />
       </motion.div>
 
@@ -44,11 +57,24 @@ export default function Dashboard() {
         <h2 className="text-3xl font-semibold mb-6 text-gray-700">
           📌 Today's Tasks
         </h2>
-        <ul className="space-y-4 text-gray-500 italic">
-          <li>No tasks yet. Stay focused! 💪</li>
-        </ul>
+        {tasks.length === 0 ? (
+          <p className="text-gray-500 italic">No tasks yet. Stay focused! 💪</p>
+        ) : (
+          <ul className="space-y-3">
+            {tasks.map((task, index) => (
+              <li
+                key={index}
+                className="bg-gray-100 rounded-lg px-4 py-3 shadow-sm text-gray-800 flex items-start"
+              >
+                <span className="text-blue-600 font-bold mr-2">•</span>
+                <span>{task}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
+      {/* Placeholder Progress Section */}
       <section className="mb-14">
         <h2 className="text-3xl font-semibold mb-6 text-gray-700">
           📈 Weekly Progress
@@ -58,6 +84,7 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Motivational Quote */}
       <motion.section
         className="mb-14 max-w-xl mx-auto"
         initial={{ opacity: 0 }}
