@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -8,13 +8,24 @@ export default function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
-  const tasks = [
-    { id: 1, date: "2025-08-05", name: "Morning Walk" },
-    { id: 2, date: "2025-08-05", name: "Read a book" },
-    { id: 3, date: "2025-08-10", name: "Meeting with team" },
-    { id: 4, date: "2025-08-15", name: "Workout" },
-  ];
+  // Load tasks from localStorage
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasksWithDates");
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, []);
+
+  // For testing (optional): If you want to preload some tasks once
+  // useEffect(() => {
+  //   const sample = [
+  //     { id: 1, date: "2025-10-07", name: "Morning Walk" },
+  //     { id: 2, date: "2025-10-08", name: "Read Book" },
+  //   ];
+  //   localStorage.setItem("tasksWithDates", JSON.stringify(sample));
+  // }, []);
 
   const monthName = new Date(currentYear, currentMonth).toLocaleString(
     "default",
@@ -84,14 +95,14 @@ export default function Calendar() {
         </button>
       </div>
 
-      {/* Weekday headers */}
+      {/* Weekdays */}
       <div className="grid grid-cols-7 gap-2 mb-4 text-center text-gray-500 font-semibold uppercase tracking-wider">
         {weekdays.map((day) => (
           <div key={day}>{day}</div>
         ))}
       </div>
 
-      {/* Days Grid */}
+      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-3 text-center">
         {[...Array(firstDayIndex)].map((_, i) => (
           <div key={"pad" + i}></div>
@@ -104,7 +115,6 @@ export default function Calendar() {
           )}-${String(day).padStart(2, "0")}`;
           const hasTasks = tasks.some((task) => task.date === dayStr);
           const isSelected = day === selectedDay;
-
           const isToday =
             day === today.getDate() &&
             currentMonth === today.getMonth() &&
@@ -128,12 +138,46 @@ export default function Calendar() {
                 <motion.div
                   layoutId="task-dot"
                   className="mt-1 w-2.5 h-2.5 rounded-full bg-blue-500"
-                ></motion.div>
+                />
               )}
             </motion.div>
           );
         })}
       </div>
+
+      {/* Tasks for Selected Day */}
+      <AnimatePresence>
+        {selectedDay && (
+          <motion.div
+            key="task-list"
+            className="mt-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <h3 className="text-2xl font-bold mb-4 text-gray-700">
+              Tasks for {selectedDateStr}
+            </h3>
+
+            {tasksForSelectedDay.length === 0 ? (
+              <p className="text-gray-500 italic">
+                No tasks scheduled for this day.
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {tasksForSelectedDay.map((task) => (
+                  <li
+                    key={task.id}
+                    className="bg-gray-100 p-4 rounded-lg shadow-sm border-l-4 border-blue-500 text-gray-800"
+                  >
+                    {task.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

@@ -5,7 +5,7 @@ export default function Activities() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
-  // Load tasks from localStorage on component mount
+  // Load existing tasks from localStorage
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
@@ -25,6 +25,15 @@ export default function Activities() {
       setTasks((prevTasks) => [...prevTasks, trimmedTask]);
       setTask("");
     }
+  };
+  const handleAddTask = () => {
+    const tasks = JSON.parse(localStorage.getItem("tasksWithDates")) || [];
+    const newTask = {
+      id: Date.now(),
+      date: "2025-10-07",
+      name: "New Task",
+    };
+    localStorage.setItem("tasksWithDates", JSON.stringify([...tasks, newTask]));
   };
 
   return (

@@ -6,10 +6,9 @@ import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [tasks, setTasks] = useState([]);
 
-  // Load tasks from localStorage when Dashboard mounts
+  // Load tasks from localStorage on mount
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
@@ -46,7 +45,7 @@ export default function Dashboard() {
           },
         }}
       >
-        <StatCard title="Activities Completed" value="5 / 8" />
+        <StatCard title="Activities Completed" value={tasks.length} />
         <StatCard title="Time Spent" value="3h 45m" />
         <StatCard title="Tasks Left" value={tasks.length} />
         <StatCard title="Weekly Streak" value="4 days" />
