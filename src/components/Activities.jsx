@@ -5,7 +5,6 @@ export default function Activities() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
-  // Load existing tasks from localStorage
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
@@ -13,7 +12,6 @@ export default function Activities() {
     }
   }, []);
 
-  // Save tasks to localStorage whenever tasks change
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);

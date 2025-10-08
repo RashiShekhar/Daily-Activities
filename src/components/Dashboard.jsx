@@ -7,6 +7,13 @@ export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
+  const totalMinutes = tasks.reduce(
+    (acc, task) => acc + (task.duration || 0),
+    0
+  );
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const timeSpentStr = `${hours}h ${minutes}m`;
 
   // Load tasks from localStorage on mount
   useEffect(() => {
@@ -46,7 +53,7 @@ export default function Dashboard() {
         }}
       >
         <StatCard title="Activities Completed" value={tasks.length} />
-        <StatCard title="Time Spent" value="3h 45m" />
+        <StatCard title="Time Spent" value={timeSpentStr} />
         <StatCard title="Tasks Left" value={tasks.length} />
         <StatCard title="Weekly Streak" value="4 days" />
       </motion.div>
