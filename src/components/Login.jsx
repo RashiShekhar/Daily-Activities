@@ -54,19 +54,24 @@ function Login() {
 
       {/* Right: Login Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-8">
+        {" "}
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
+          {" "}
           <h1 className="text-3xl lg:text-4xl font-extrabold text-black text-center mb-6">
-            Log In
-          </h1>
-
+            {" "}
+            Log In{" "}
+          </h1>{" "}
           <form onSubmit={handleLogin} className="space-y-6">
+            {" "}
             <div>
+              {" "}
               <label
                 htmlFor="email"
                 className="block text-sm font-semibold text-gray-700 mb-1"
               >
-                Email
-              </label>
+                {" "}
+                Email{" "}
+              </label>{" "}
               <input
                 type="email"
                 id="email"
@@ -75,16 +80,17 @@ function Login() {
                 className="w-full px-4 py-3 rounded-lg bg-gray-100 text-black placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                 placeholder="Enter your email"
                 required
-              />
-            </div>
-
+              />{" "}
+            </div>{" "}
             <div>
+              {" "}
               <label
                 htmlFor="password"
                 className="block text-sm font-semibold text-gray-700 mb-1"
               >
-                Password
-              </label>
+                {" "}
+                Password{" "}
+              </label>{" "}
               <input
                 type="password"
                 id="password"
@@ -93,24 +99,23 @@ function Login() {
                 className="w-full px-4 py-3 rounded-lg bg-gray-100 text-black placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                 placeholder="Enter your password"
                 required
-              />
-            </div>
-
+              />{" "}
+            </div>{" "}
             <button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition"
             >
-              Log In
-            </button>
-          </form>
-
+              Log In{" "}
+            </button>{" "}
+          </form>{" "}
           <p className="mt-4 text-sm text-gray-500 text-center">
             Don’t have an account?{" "}
             <Link className="text-blue-600 hover:underline" to="/signup">
-              Sign up
-            </Link>
-          </p>
-        </div>
+              {" "}
+              Sign up{" "}
+            </Link>{" "}
+          </p>{" "}
+        </div>{" "}
       </div>
     </div>
   );

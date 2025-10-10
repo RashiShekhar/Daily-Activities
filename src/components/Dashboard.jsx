@@ -38,7 +38,6 @@ export default function Dashboard() {
       >
         Good evening, {user?.name || "there"} 👋
       </motion.h1>
-
       {/* Stats */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14"
@@ -79,7 +78,6 @@ export default function Dashboard() {
           </ul>
         )}
       </section>
-
       {/* Placeholder Progress Section */}
       <section className="mb-14">
         <h2 className="text-3xl font-semibold mb-6 text-gray-700">
@@ -89,7 +87,6 @@ export default function Dashboard() {
           [Your Chart Goes Here]
         </div>
       </section>
-
       {/* Motivational Quote */}
       <motion.section
         className="mb-14 max-w-xl mx-auto"
@@ -102,7 +99,6 @@ export default function Dashboard() {
           most.”
         </blockquote>
       </motion.section>
-
       {/* CTA Button */}
       <div className="text-center">
         <motion.button
