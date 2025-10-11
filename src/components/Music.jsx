@@ -1,27 +1,68 @@
 import React, { useEffect, useState } from "react";
 
-const CLIENT_ID = "7066ad5b";
-
 export default function Music() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchMusic() {
-      try {
-        const response = await fetch(
-          `https://api.jamendo.com/v3.0/tracks/?client_id=${CLIENT_ID}&format=json&limit=12&include=musicinfo+stats`
-        );
-        const data = await response.json();
-        setTracks(data.results);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching music", error);
-        setLoading(false);
-      }
-    }
+    const newTracks = [
+      {
+        id: "rfl1",
+        name: "Carefree Happiness",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/carefree-happiness.jpg",
+        audio: "https://royaltyfreemusiclibrary.com/mp3/Carefree-Happiness.mp3",
+      },
+      {
+        id: "rfl2",
+        name: "Memories And Inspiration",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/memories-inspiration.jpg",
+        audio:
+          "https://royaltyfreemusiclibrary.com/mp3/Memories-Inspiration.mp3",
+      },
+      {
+        id: "rfl3",
+        name: "Ukulele Happiness",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/ukulele-happiness.jpg",
+        audio: "https://royaltyfreemusiclibrary.com/mp3/Ukulele-Happiness.mp3",
+      },
+      {
+        id: "rfl4",
+        name: "Epic Cinematic",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/epic-cinematic.jpg",
+        audio: "https://royaltyfreemusiclibrary.com/mp3/Epic-Cinematic.mp3",
+      },
+      {
+        id: "rfl5",
+        name: "Upbeat Summer",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/upbeat-summer.jpg",
+        audio: "https://royaltyfreemusiclibrary.com/mp3/Upbeat-Summer.mp3",
+      },
+      {
+        id: "rfl6",
+        name: "Inspiring Corporate",
+        artist_name: "RoyaltyFreeMusicLibrary",
+        album_image:
+          "https://royaltyfreemusiclibrary.com/images/inspiring-corporate.jpg",
+        audio:
+          "https://royaltyfreemusiclibrary.com/mp3/Inspiring-Corporate.mp3",
+      },
+    ];
 
-    fetchMusic();
+    // simulate loading
+    setTimeout(() => {
+      setTracks(newTracks);
+      setLoading(false);
+    }, 500);
   }, []);
 
   return (

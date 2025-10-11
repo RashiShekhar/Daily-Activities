@@ -1,0 +1,17 @@
+[
+    {
+      "id": "rfl1",
+      "name": "Carefree Happiness",
+      "artist_name": "RoyaltyFreeMusicLibrary",
+      "album_image": "https://royaltyfreemusiclibrary.com/images/carefree-happiness.jpg",
+      "audio": "https://royaltyfreemusiclibrary.com/mp3/Carefree-Happiness.mp3"
+    },
+    {
+      "id": "rfl2",
+      "name": "Memories And Inspiration",
+      "artist_name": "RoyaltyFreeMusicLibrary",
+      "album_image": "https://royaltyfreemusiclibrary.com/images/memories-inspiration.jpg",
+      "audio": "https://royaltyfreemusiclibrary.com/mp3/Memories-Inspiration.mp3"
+    }
+  ]
+  
