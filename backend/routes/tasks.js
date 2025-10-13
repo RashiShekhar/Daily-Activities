@@ -10,14 +10,18 @@ router.get("/", async (req, res) => {
 
 // POST a new task
 router.post("/", async (req, res) => {
-  const { name } = req.body;
-  if (!name || name.trim() === "") {
-    return res.status(400).json({ error: "Task name is required" });
-  }
+  try {
+    const { name } = req.body;
+    if (!name || name.trim() === "") {
+      return res.status(400).json({ error: "Task name is required" });
+    }
 
-  const task = new Task({ name: name.trim() });
-  await task.save();
-  res.status(201).json(task);
+    const task = new Task({ name: name.trim() });
+    await task.save();
+    res.status(201).json(task); // ✅ Important: return the saved task
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 // DELETE a task (optional)

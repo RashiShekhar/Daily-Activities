@@ -6,12 +6,13 @@ const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const taskRoutes = require("./routes/task");
+const taskRoutes = require("./routes/tasks");
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-app.use("/task", taskRoutes);
+app.use("/tasks", taskRoutes);
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.DATABASE_URL, {
