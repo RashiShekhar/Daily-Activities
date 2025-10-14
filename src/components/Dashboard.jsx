@@ -3,10 +3,40 @@ import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+// List of motivational quotes
+const motivationalQuotes = [
+  "Discipline is choosing between what you want now and what you want most.",
+  "Success doesn't come from what you do occasionally, it comes from what you do consistently.",
+  "Push yourself, because no one else is going to do it for you.",
+  "Small steps every day lead to big results.",
+  "You don’t have to be great to start, but you have to start to be great.",
+  "Don’t watch the clock; do what it does. Keep going.",
+  "Motivation gets you going, but discipline keeps you growing.",
+];
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
+  const [quote, setQuote] = useState("");
+
+  // Load tasks and pick a random quote on mount
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      const parsed = JSON.parse(savedTasks);
+      const normalizedTasks = parsed.map((task) =>
+        typeof task === "string" ? { name: task } : task
+      );
+      setTasks(normalizedTasks);
+    }
+
+    // Pick a random quote
+    const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+    setQuote(motivationalQuotes[randomIndex]);
+  }, []);
+
+  // Calculate total time
   const totalMinutes = tasks.reduce(
     (acc, task) => acc + (task.duration || 0),
     0
@@ -15,14 +45,6 @@ export default function Dashboard() {
   const minutes = totalMinutes % 60;
   const timeSpentStr = `${hours}h ${minutes}m`;
 
-  // Load tasks from localStorage on mount
-  useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
-  }, []);
-
   return (
     <motion.div
       className="max-w-7xl mx-auto p-8 bg-white rounded-2xl shadow-lg"
@@ -30,6 +52,7 @@ export default function Dashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
+      {/* Greeting */}
       <motion.h1
         className="text-4xl font-extrabold mb-10 text-gray-800 text-center"
         initial={{ opacity: 0, y: -10 }}
@@ -38,22 +61,21 @@ export default function Dashboard() {
       >
         Good evening, {user?.name || "there"} 👋
       </motion.h1>
-      {/* Stats */}
+
+      {/* Stats Section */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14"
         initial="hidden"
         animate="visible"
         variants={{
           visible: {
-            transition: {
-              staggerChildren: 0.1,
-            },
+            transition: { staggerChildren: 0.1 },
           },
         }}
       >
-        <StatCard title="Activities Completed" value={tasks.length} />
+        <StatCard title="Activities Completed" value={tasks.length || 0} />
         <StatCard title="Time Spent" value={timeSpentStr} />
-        <StatCard title="Tasks Left" value={tasks.length} />
+        <StatCard title="Tasks Left" value={tasks.length || 0} />
         <StatCard title="Weekly Streak" value="4 days" />
       </motion.div>
 
@@ -68,25 +90,17 @@ export default function Dashboard() {
           <ul className="space-y-3">
             {tasks.map((task, index) => (
               <li
-                key={index}
+                key={task._id || index}
                 className="bg-gray-100 rounded-lg px-4 py-3 shadow-sm text-gray-800 flex items-start"
               >
                 <span className="text-blue-600 font-bold mr-2">•</span>
-                <span>{task}</span>
+                <span>{task.name}</span>
               </li>
             ))}
           </ul>
         )}
       </section>
-      {/* Placeholder Progress Section */}
-      <section className="mb-14">
-        <h2 className="text-3xl font-semibold mb-6 text-gray-700">
-          📈 Weekly Progress
-        </h2>
-        <div className="bg-gray-100 rounded-xl shadow-inner p-8 h-48 flex items-center justify-center text-gray-400 italic">
-          [Your Chart Goes Here]
-        </div>
-      </section>
+
       {/* Motivational Quote */}
       <motion.section
         className="mb-14 max-w-xl mx-auto"
@@ -95,10 +109,10 @@ export default function Dashboard() {
         transition={{ delay: 0.6 }}
       >
         <blockquote className="border-l-4 border-blue-600 pl-6 italic text-gray-600 text-center">
-          “Discipline is choosing between what you want now and what you want
-          most.”
+          “{quote}”
         </blockquote>
       </motion.section>
+
       {/* CTA Button */}
       <div className="text-center">
         <motion.button

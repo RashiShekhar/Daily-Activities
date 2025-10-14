@@ -4,34 +4,54 @@ import { motion } from "framer-motion";
 export default function Activities() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  const BACKEND_URL = "http://localhost:5000/tasks";
+  // Change this if deployed
+
+  // Fetch tasks on component mount
   useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
+    const fetchTasks = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(BACKEND_URL);
+        if (!res.ok) throw new Error("Failed to fetch tasks");
+        const data = await res.json();
+        setTasks(data);
+      } catch (err) {
+        console.error("Failed to load tasks:", err);
+        setError("Failed to load tasks. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  const handleSubmit = (e) => {
+  // Submit new task to backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedTask = task.trim();
-    if (trimmedTask) {
-      setTasks((prevTasks) => [...prevTasks, trimmedTask]);
+    if (!trimmedTask) return;
+
+    try {
+      const res = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedTask }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add task");
+
+      const newTask = await res.json();
+      setTasks((prev) => [newTask, ...prev]);
       setTask("");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to add task. Please try again.");
     }
-  };
-  const handleAddTask = () => {
-    const tasks = JSON.parse(localStorage.getItem("tasksWithDates")) || [];
-    const newTask = {
-      id: Date.now(),
-      date: "2025-10-07",
-      name: "New Task",
-    };
-    localStorage.setItem("tasksWithDates", JSON.stringify([...tasks, newTask]));
   };
 
   return (
@@ -80,6 +100,8 @@ export default function Activities() {
         </motion.button>
       </motion.form>
 
+      {error && <p className="text-red-500 text-center mb-6">{error}</p>}
+
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -89,17 +111,19 @@ export default function Activities() {
           📋 Your Tasks
         </h3>
 
-        {tasks.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-500">Loading tasks...</p>
+        ) : tasks.length === 0 ? (
           <p className="text-gray-500">No tasks yet. Start adding some!</p>
         ) : (
           <ul className="space-y-4">
-            {tasks.map((t, index) => (
+            {tasks.map((t) => (
               <li
-                key={index}
+                key={t._id}
                 className="flex items-start bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-sm"
               >
                 <span className="text-blue-600 font-bold mr-2">•</span>
-                <span className="text-gray-800">{t}</span>
+                <span className="text-gray-800">{t.name}</span>
               </li>
             ))}
           </ul>
