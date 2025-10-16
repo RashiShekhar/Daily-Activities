@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// List of motivational quotes
+// Motivational Quotes
 const motivationalQuotes = [
   "Discipline is choosing between what you want now and what you want most.",
   "Success doesn't come from what you do occasionally, it comes from what you do consistently.",
@@ -14,13 +14,22 @@ const motivationalQuotes = [
   "Motivation gets you going, but discipline keeps you growing.",
 ];
 
+// Productivity Tips
+const productivityTips = [
+  "Use the Pomodoro technique: 25 min work, 5 min break.",
+  "Tackle your hardest task first — it's called 'eating the frog'.",
+  "Clear distractions: phone off, tabs closed.",
+  "Batch similar tasks to stay in flow.",
+  "Review your goals every morning.",
+];
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [quote, setQuote] = useState("");
 
-  // Load tasks and pick a random quote on mount
+  // Load tasks and random quote on mount
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
@@ -31,12 +40,12 @@ export default function Dashboard() {
       setTasks(normalizedTasks);
     }
 
-    // Pick a random quote
+    // Pick a random motivational quote
     const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
     setQuote(motivationalQuotes[randomIndex]);
   }, []);
 
-  // Calculate total time
+  // Calculate total time spent
   const totalMinutes = tasks.reduce(
     (acc, task) => acc + (task.duration || 0),
     0
@@ -44,6 +53,25 @@ export default function Dashboard() {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const timeSpentStr = `${hours}h ${minutes}m`;
+
+  // Daily progress calculation
+  const dailyGoalMinutes = 240; // 4 hours
+  const progressPercent = Math.min(
+    (totalMinutes / dailyGoalMinutes) * 100,
+    100
+  );
+
+  // Productivity Tip of the Day
+  const tipIndex = new Date().getDate() % productivityTips.length;
+  const dailyTip = productivityTips[tipIndex];
+
+  // Mark task complete
+  const handleMarkDone = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = true;
+    setTasks(updatedTasks);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  };
 
   return (
     <motion.div
@@ -75,9 +103,31 @@ export default function Dashboard() {
       >
         <StatCard title="Activities Completed" value={tasks.length || 0} />
         <StatCard title="Time Spent" value={timeSpentStr} />
-        <StatCard title="Tasks Left" value={tasks.length || 0} />
+        <StatCard
+          title="Tasks Left"
+          value={tasks.filter((t) => !t.completed).length}
+        />
         <StatCard title="Weekly Streak" value="4 days" />
       </motion.div>
+
+      {/* Daily Progress Bar */}
+      <section className="mb-14">
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          🕓 Daily Progress
+        </h3>
+        <div className="w-full bg-gray-200 h-4 rounded-full overflow-hidden">
+          <motion.div
+            className="bg-blue-500 h-full"
+            style={{ width: `${progressPercent}%` }}
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.8 }}
+          />
+        </div>
+        <p className="text-sm text-gray-600 mt-1">
+          {Math.floor(progressPercent)}% of your daily goal (4h)
+        </p>
+      </section>
 
       {/* Today's Tasks */}
       <section className="mb-14">
@@ -91,10 +141,22 @@ export default function Dashboard() {
             {tasks.map((task, index) => (
               <li
                 key={task._id || index}
-                className="bg-gray-100 rounded-lg px-4 py-3 shadow-sm text-gray-800 flex items-start"
+                className={`bg-gray-100 rounded-lg px-4 py-3 shadow-sm text-gray-800 flex items-center justify-between ${
+                  task.completed ? "opacity-50 line-through" : ""
+                }`}
               >
-                <span className="text-blue-600 font-bold mr-2">•</span>
-                <span>{task.name}</span>
+                <div className="flex items-center">
+                  <span className="text-blue-600 font-bold mr-2">•</span>
+                  <span>{task.name}</span>
+                </div>
+                {!task.completed && (
+                  <button
+                    onClick={() => handleMarkDone(index)}
+                    className="text-sm text-green-600 hover:text-green-800"
+                  >
+                    Mark Done
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -103,7 +165,7 @@ export default function Dashboard() {
 
       {/* Motivational Quote */}
       <motion.section
-        className="mb-14 max-w-xl mx-auto"
+        className="mb-10 max-w-xl mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
@@ -112,6 +174,14 @@ export default function Dashboard() {
           “{quote}”
         </blockquote>
       </motion.section>
+
+      {/* Productivity Tip */}
+      <section className="mb-14 max-w-xl mx-auto text-center">
+        <h4 className="text-lg font-semibold text-gray-700 mb-2">
+          💡 Productivity Tip
+        </h4>
+        <p className="text-gray-600 italic">"{dailyTip}"</p>
+      </section>
 
       {/* CTA Button */}
       <div className="text-center">
@@ -128,6 +198,7 @@ export default function Dashboard() {
   );
 }
 
+// StatCard component
 function StatCard({ title, value }) {
   return (
     <motion.div
