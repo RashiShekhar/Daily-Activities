@@ -9,6 +9,7 @@ export default function Calendar() {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState("");
 
   // Load tasks from localStorage
   useEffect(() => {
@@ -18,14 +19,10 @@ export default function Calendar() {
     }
   }, []);
 
-  // For testing (optional): If you want to preload some tasks once
-  // useEffect(() => {
-  //   const sample = [
-  //     { id: 1, date: "2025-10-07", name: "Morning Walk" },
-  //     { id: 2, date: "2025-10-08", name: "Read Book" },
-  //   ];
-  //   localStorage.setItem("tasksWithDates", JSON.stringify(sample));
-  // }, []);
+  // Save tasks to localStorage on change
+  useEffect(() => {
+    localStorage.setItem("tasksWithDates", JSON.stringify(tasks));
+  }, [tasks]);
 
   const monthName = new Date(currentYear, currentMonth).toLocaleString(
     "default",
@@ -38,35 +35,43 @@ export default function Calendar() {
   const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
+  const getDateString = (day) =>
+    `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(
+      day
+    ).padStart(2, "0")}`;
+
   const selectedDateStr =
-    selectedDay !== null
-      ? `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(
-          selectedDay
-        ).padStart(2, "0")}`
-      : null;
+    selectedDay !== null ? getDateString(selectedDay) : null;
 
   const tasksForSelectedDay = selectedDateStr
     ? tasks.filter((task) => task.date === selectedDateStr)
     : [];
 
   const goToPrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
+    setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));
+    if (currentMonth === 0) setCurrentYear((y) => y - 1);
     setSelectedDay(null);
   };
 
   const goToNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
+    setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1));
+    if (currentMonth === 11) setCurrentYear((y) => y + 1);
     setSelectedDay(null);
+  };
+
+  const handleAddTask = () => {
+    if (!newTask.trim()) return;
+    const newTaskObj = {
+      id: Date.now(),
+      date: selectedDateStr,
+      name: newTask.trim(),
+    };
+    setTasks((prev) => [...prev, newTaskObj]);
+    setNewTask("");
+  };
+
+  const handleDeleteTask = (id) => {
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
   return (
@@ -109,10 +114,7 @@ export default function Calendar() {
         ))}
 
         {daysArray.map((day) => {
-          const dayStr = `${currentYear}-${String(currentMonth + 1).padStart(
-            2,
-            "0"
-          )}-${String(day).padStart(2, "0")}`;
+          const dayStr = getDateString(day);
           const hasTasks = tasks.some((task) => task.date === dayStr);
           const isSelected = day === selectedDay;
           const isToday =
@@ -159,6 +161,23 @@ export default function Calendar() {
               Tasks for {selectedDateStr}
             </h3>
 
+            {/* Add Task */}
+            <div className="flex mb-4 gap-2">
+              <input
+                type="text"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="Add new task..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleAddTask}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Add
+              </button>
+            </div>
+
             {tasksForSelectedDay.length === 0 ? (
               <p className="text-gray-500 italic">
                 No tasks scheduled for this day.
@@ -168,9 +187,15 @@ export default function Calendar() {
                 {tasksForSelectedDay.map((task) => (
                   <li
                     key={task.id}
-                    className="bg-gray-100 p-4 rounded-lg shadow-sm border-l-4 border-blue-500 text-gray-800"
+                    className="bg-gray-100 p-4 rounded-lg shadow-sm border-l-4 border-blue-500 flex justify-between items-center"
                   >
-                    {task.name}
+                    <span>{task.name}</span>
+                    <button
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="text-red-500 hover:text-red-700 text-sm"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>
