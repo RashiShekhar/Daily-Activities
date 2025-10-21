@@ -7,6 +7,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const taskRoutes = require("./routes/tasks");
+const tracks = require("./data/tracks");
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -25,6 +26,10 @@ mongoose
 // Routes
 const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
+
+app.get("/api/tracks", (req, res) => {
+  res.json(tracks);
+});
 
 // Root route
 app.get("/", (req, res) => {
