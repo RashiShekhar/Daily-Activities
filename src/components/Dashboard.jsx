@@ -54,13 +54,6 @@ export default function Dashboard() {
   const minutes = totalMinutes % 60;
   const timeSpentStr = `${hours}h ${minutes}m`;
 
-  // Daily progress calculation
-  const dailyGoalMinutes = 240; // 4 hours
-  const progressPercent = Math.min(
-    (totalMinutes / dailyGoalMinutes) * 100,
-    100
-  );
-
   // Productivity Tip of the Day
   const tipIndex = new Date().getDate() % productivityTips.length;
   const dailyTip = productivityTips[tipIndex];
@@ -110,22 +103,16 @@ export default function Dashboard() {
         <StatCard title="Weekly Streak" value="4 days" />
       </motion.div>
 
-      {/* Daily Progress Bar */}
-      <section className="mb-14">
+      {/* Time Spent Today Section (New) */}
+      <section className="mb-14 text-center">
         <h3 className="text-xl font-semibold text-gray-700 mb-2">
-          🕓 Daily Progress
+          ⏱️ Time Spent Today
         </h3>
-        <div className="w-full bg-gray-200 h-4 rounded-full overflow-hidden">
-          <motion.div
-            className="bg-blue-500 h-full"
-            style={{ width: `${progressPercent}%` }}
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.8 }}
-          />
+        <div className="inline-block bg-blue-100 text-blue-800 font-semibold px-6 py-3 rounded-full text-lg shadow">
+          {timeSpentStr}
         </div>
-        <p className="text-sm text-gray-600 mt-1">
-          {Math.floor(progressPercent)}% of your daily goal (4h)
+        <p className="text-sm text-gray-600 mt-2">
+          Goal: 4 hours (240 minutes)
         </p>
       </section>
 
