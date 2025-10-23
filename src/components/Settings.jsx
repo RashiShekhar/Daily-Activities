@@ -21,22 +21,49 @@ export default function Settings() {
     >
       <h1 className="settings-title">⚙️ Settings</h1>
 
+      {/* User Info Card */}
       <motion.div
-        className="section user-details"
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
+        className="user-card"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h2>User Details</h2>
+        <div className="avatar">
+          <span>{user.name ? user.name[0].toUpperCase() : "?"}</span>
+        </div>
+
+        <div className="user-info">
+          <h2>{user.name || "Guest User"}</h2>
+          <p>{user.email || "No email available"}</p>
+        </div>
+      </motion.div>
+
+      {/* Account Section */}
+      <motion.div
+        className="section"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h3>Account</h3>
         <div className="detail-row">
-          <span className="label">Name:</span>
+          <span className="label">Name</span>
           <span className="value">{user.name || "Not Available"}</span>
         </div>
         <div className="detail-row">
-          <span className="label">Email:</span>
+          <span className="label">Email</span>
           <span className="value">{user.email || "Not Available"}</span>
         </div>
       </motion.div>
+
+      {/* Theme Toggle Placeholder */}
+      <motion.button
+        className="theme-toggle-btn"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        🌗 Toggle Theme
+      </motion.button>
     </motion.div>
   );
 }
