@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import "./Music.css";
 
 export default function Music() {
   const [tracks, setTracks] = useState([]);
@@ -18,46 +20,48 @@ export default function Music() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">
-        🎵 My Music List
-      </h1>
+    <motion.div
+      className="music-container"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <h1 className="music-title">🎵 My Music List</h1>
 
       {loading ? (
-        <p className="text-center text-gray-500 text-lg">Loading music...</p>
+        <p className="loading-text">Loading music...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {tracks.map((track) => (
-            <div
-              key={track.id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-1 transition duration-300 ease-in-out"
+        <div className="music-grid">
+          {tracks.map((track, index) => (
+            <motion.div
+              key={track.id || index}
+              className="music-card"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ scale: 1.03 }}
             >
               {track.album_image ? (
                 <img
                   src={track.album_image}
-                  alt={`${track.name} cover`}
-                  className="w-full h-48 object-cover"
+                  alt={track.name}
+                  className="album-img"
                 />
               ) : (
-                <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500 text-sm">
-                  No Image
-                </div>
+                <div className="no-image">No Image</div>
               )}
 
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-800 truncate">
-                  {track.name}
-                </h2>
-                <p className="text-sm text-gray-600 mb-2">
-                  by <span className="font-medium">{track.artist_name}</span>
+              <div className="music-info">
+                <h2 className="track-name">{track.name}</h2>
+                <p className="artist-name">
+                  by <span>{track.artist_name}</span>
                 </p>
-
-                <audio controls src={track.audio} className="w-full mt-2" />
+                <audio controls src={track.audio} className="audio-player" />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
